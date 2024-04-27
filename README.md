@@ -85,21 +85,21 @@ Here is a brief overview of the critical files and their purposes:
 
 | File                                                                                                                       | Summary                         |
 | ---                                                                                                                        | ---                             |
-| [reset_position.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/reset_position.py)           | <code>► INSERT-TEXT-HERE</code> |
-| [armbot class test 4.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 4.py) | <code>► INSERT-TEXT-HERE</code> |
-| [armbot class test 1.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 1.py) | <code>► INSERT-TEXT-HERE</code> |
-| [hello arm 2.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/hello arm 2.py)                 | <code>► INSERT-TEXT-HERE</code> |
-| [sample code 3.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 3.py)             | <code>► INSERT-TEXT-HERE</code> |
-| [armbot.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot.py)                           | <code>► INSERT-TEXT-HERE</code> |
-| [armbot class test 3.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 3.py) | <code>► INSERT-TEXT-HERE</code> |
-| [kinematics.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/kinematics.py)                   | <code>► INSERT-TEXT-HERE</code> |
-| [sample code 4.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 4.py)             | <code>► INSERT-TEXT-HERE</code> |
-| [aravis.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/aravis.py)                           | <code>► INSERT-TEXT-HERE</code> |
-| [sample code 2.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 2.py)             | <code>► INSERT-TEXT-HERE</code> |
-| [armbot class test 2.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 2.py) | <code>► INSERT-TEXT-HERE</code> |
-| [hello arm.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/hello arm.py)                     | <code>► INSERT-TEXT-HERE</code> |
-| [armbot class test 5.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 5.py) | <code>► INSERT-TEXT-HERE</code> |
-| [sample code 1.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 1.py)             | <code>► INSERT-TEXT-HERE</code> |
+| [reset_position.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/reset_position.py)           | <code> </code> |
+| [armbot class test 4.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 4.py) | <code> </code> |
+| [armbot class test 1.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 1.py) | <code> </code> |
+| [hello arm 2.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/hello arm 2.py)                 | <code> </code> |
+| [sample code 3.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 3.py)             | <code> </code> |
+| [armbot.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot.py)                           | <code> </code> |
+| [armbot class test 3.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 3.py) | <code> </code> |
+| [kinematics.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/kinematics.py)                   | <code> </code> |
+| [sample code 4.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 4.py)             | <code> </code> |
+| [aravis.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/aravis.py)                           | <code> </code> |
+| [sample code 2.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 2.py)             | <code> </code> |
+| [armbot class test 2.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 2.py) | <code> </code> |
+| [hello arm.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/hello arm.py)                     | <code> </code> |
+| [armbot class test 5.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/armbot class test 5.py) | <code> </code> |
+| [sample code 1.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/sample code 1.py)             | <code> </code> |
 
 </details>
 
@@ -107,15 +107,15 @@ Here is a brief overview of the critical files and their purposes:
 
 | File                                                                                                                      | Summary                         |
 | ---                                                                                                                       | ---                             |
-| [eva_http_client.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_http_client.py) | <code>► INSERT-TEXT-HERE</code> |
-| [eva_ws.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_ws.py)                   | <code>► INSERT-TEXT-HERE</code> |
-| [EvaDiscoverer.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/EvaDiscoverer.py)     | <code>► INSERT-TEXT-HERE</code> |
-| [eva_locker.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_locker.py)           | <code>► INSERT-TEXT-HERE</code> |
-| [eva_errors.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_errors.py)           | <code>► INSERT-TEXT-HERE</code> |
-| [version.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/version.py)                 | <code>► INSERT-TEXT-HERE</code> |
-| [Eva.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/Eva.py)                         | <code>► INSERT-TEXT-HERE</code> |
-| [helpers.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/helpers.py)                 | <code>► INSERT-TEXT-HERE</code> |
-| [robot_state.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/robot_state.py)         | <code>► INSERT-TEXT-HERE</code> |
+| [eva_http_client.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_http_client.py) | <code> </code> |
+| [eva_ws.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_ws.py)                   | <code> </code> |
+| [EvaDiscoverer.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/EvaDiscoverer.py)     | <code> </code> |
+| [eva_locker.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_locker.py)           | <code> </code> |
+| [eva_errors.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/eva_errors.py)           | <code> </code> |
+| [version.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/version.py)                 | <code> </code> |
+| [Eva.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/Eva.py)                         | <code> </code> |
+| [helpers.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/helpers.py)                 | <code> </code> |
+| [robot_state.py](https://github.com/Alexpascual28/eva_armbot_control_class.git/blob/master/evasdk/robot_state.py)         | <code> </code> |
 
 </details>
 
