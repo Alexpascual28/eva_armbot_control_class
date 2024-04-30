@@ -427,8 +427,8 @@ The `main` function manages the resetting of joint angles for two robotic arms:
 
 **Error Handling**:
 
-   * A try-except block captures KeyboardInterrupt to allow for safe termination of the program during manual interruptions.
-   * The finally block is set up to potentially reset the arms if needed, though the reset command is commented out to stress the importance of manual inspection before automated resets.
+   * A `try-except` block captures `KeyboardInterrupt` to allow for safe termination of the program during manual interruptions.
+   * The `finally` block is set up to potentially reset the arms if needed, though the reset command is commented out to stress the importance of manual inspection before automated resets.
 
 ### Example Code
 
