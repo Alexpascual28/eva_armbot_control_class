@@ -2,7 +2,7 @@
 """
 Created on Mon Nov 13 17:23:18 2023
 
-@title: Armbot class test 1
+@title: "Hello Arm" Algorithm
 @author: Alejandro Pascual San Roman (bdh532)
 @organisation: School of Physics, Engineering and Technology. University of York
 
