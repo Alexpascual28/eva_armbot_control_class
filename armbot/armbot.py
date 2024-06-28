@@ -8,8 +8,8 @@ Created on Mon Nov  17:23:18 2023
 
 """
 
-from kinematics import Kinematics
-from evasdk import Eva
+from armbot.kinematics import Kinematics
+from armbot.evasdk import Eva
 import time
 import cv2
 from armbot.aravis import Camera
