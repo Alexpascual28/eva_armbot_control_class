@@ -22,7 +22,7 @@ Created on Mon May  1 17:23:18 2023
 
 # 1. import all the modules/libraries for Python that are needed for your code, including NumPy, SymPy, MatPlotLib 
 #    (if you want to use plotting of your kinematics as before), the evasdk module, and the aravis module.
-from kinematics import Kinematics
+from armbot import Kinematics
 from evasdk import Eva
 import time
 

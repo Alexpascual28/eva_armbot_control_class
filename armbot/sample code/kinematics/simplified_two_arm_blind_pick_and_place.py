@@ -24,7 +24,7 @@ Created on Mon May  1 17:23:18 2023
 #    (if you want to use plotting of your kinematics as before), the evasdk module, and the aravis module.
 import numpy as np
 import matplotlib.pyplot
-from kinematics import Kinematics
+from armbot import Kinematics
 
 from mpl_toolkits.mplot3d import Axes3D
 from sympy import Matrix, Symbol, symbols, solveset, solve, simplify, S, diff, det, erf, log, sqrt, pi, sin, cos, tan, atan2, init_printing

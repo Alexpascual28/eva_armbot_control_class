@@ -8,13 +8,13 @@ Created on Mon Nov 13 17:23:18 2023
 
 """
 
-from armbot import ArmBot
+import armbot as ab
 import time
 
 def main():
     # Connect to the arms
     # https://wiki.york.ac.uk/display/TSS/Network+Details+and+Credentials+for+the+EVA+Arms+and+Network+Cameras
-    arm = ArmBot("evatrendylimashifterpt410");
+    arm = ab.ArmBot("evatrendylimashifterpt410");
     
     # Start block
     try:     

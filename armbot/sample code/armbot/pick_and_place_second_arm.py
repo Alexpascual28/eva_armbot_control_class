@@ -10,7 +10,7 @@ Created on Mon Nov 13 17:23:18 2023
 
 # 1. import all the modules/libraries for Python that are needed for your code, including NumPy, SymPy, MatPlotLib 
 #    (if you want to use plotting of your kinematics as before), the evasdk module, and the aravis module.
-from armbot import ArmBot
+import armbot as ab
 import time
 
 def main():
@@ -20,7 +20,7 @@ def main():
 # =============================================================================
 #     arm1 = ArmBot("evatrendylimashifterpt410");
 # =============================================================================
-    arm2 = ArmBot("evacunningyorkartistpt410");
+    arm2 = ab.ArmBot("evacunningyorkartistpt410");
     
     # Start block
     try:     

@@ -10,7 +10,7 @@ Created on Mon Nov 13 17:23:18 2023
 
 # 1. import all the modules/libraries for Python that are needed for your code, including NumPy, SymPy, MatPlotLib 
 #    (if you want to use plotting of your kinematics as before), the evasdk module, and the aravis module.
-from armbot import ArmBot
+import armbot as ab
 import time
 import cv2
 
@@ -18,7 +18,7 @@ def main():
     # Connect to the arms
     # Details to connect to the robot arm, more info here: 
     # https://wiki.york.ac.uk/display/TSS/Network+Details+and+Credentials+for+the+EVA+Arms+and+Network+Cameras
-    arm1 = ArmBot("evatrendylimashifterpt410");
+    arm1 = ab.ArmBot("evatrendylimashifterpt410");
     
     # Start block
     try:     
