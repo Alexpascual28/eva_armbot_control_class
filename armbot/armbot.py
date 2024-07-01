@@ -34,7 +34,7 @@ class ArmBot:
         #    and initialize the state of the robot arm to have no object in its gripper and to move to pick up.
         if self.home_pose is None:
             print("\nSetting Home position for robot arm...")
-            home_position = [0, -0.2, 0.3];
+            home_position = [0, -0.15, 0.3];
             self.home_pose = self.kn.calculate_joint_angles(home_position, position_type = "absolute")
             print("\nDone.\n")
 
@@ -342,7 +342,7 @@ class ArmBot:
             mask = self.dilating(mask)
 
             contours, h = cv2.findContours(mask, 1, cv2.CHAIN_APPROX_SIMPLE)
-            contours.sort(key = len)
+            list(contours).sort(key = len)
 
             shape_counter = 0
 
