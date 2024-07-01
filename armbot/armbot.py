@@ -78,9 +78,13 @@ class ArmBot:
         arm1_ip = "144.32.152.105"
         token1 = "1462980d67d58cb7eaabe8790d866609eb97fd2c"
 
-        arm2_hostname = "evacunningyorkartistpt410" 
-        arm2_ip = "144.32.152.2"
-        token2 = "4b1c26278a566e0419165a3acd025dd83d32b160" 
+        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410" 
+        arm2_ip = "172.16.172.1" # "144.32.152.2"
+        token2 = "23c1062c5e8a13f0cc638f222cef264487af75ff" # "4b1c26278a566e0419165a3acd025dd83d32b160"
+
+        arm3_hostname = "evacunningyorkartistpt410"
+        arm3_ip = "144.32.152.2"
+        token3 = "4b1c26278a566e0419165a3acd025dd83d32b160"
       
         # Create an “eva” object with these parameters to connect to the arm itself on the network
         if arm_hostname == arm1_hostname or arm_hostname == arm1_ip:
@@ -104,7 +108,7 @@ class ArmBot:
         camera2_hostname = "evacctv03"
         camera2_ip = "144.32.152.11"
         camera2_id = 'S1188413'
-        arm2_hostname = "evacunningyorkartistpt410"
+        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410"
 
         # Create a “cam” object with these parameters to connect to the camera itself on the network based on the arm name
         if arm_hostname == arm1_hostname:

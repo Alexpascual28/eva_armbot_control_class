@@ -8,6 +8,13 @@ Created on Mon Nov 13 17:23:18 2023
 
 """
 
+import sys
+import os
+
+# Since the armbot module is in a different directory, we need to add the path to the system path.
+file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
+sys.path.insert(0, file_path)
+
 # 1. import all the modules/libraries for Python that are needed for your code, including NumPy, SymPy, MatPlotLib 
 #    (if you want to use plotting of your kinematics as before), the evasdk module, and the aravis module.
 import armbot as ab

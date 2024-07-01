@@ -83,11 +83,11 @@ def main():
                 if image is not None:
                     
                     # b. Perform shape detection or blob detection using OpenCV to identify the target object to pick up.
-                    # Detect red colour
-                    red_mask = arm.detect_colour(image, "blue", show_frame=False)
+                    # Detect blue colour
+                    blue_mask = arm.detect_colour(image, "blue", show_frame=False)
                     
                     # Detect largest rectangle within image
-                    shape = arm.detect_shapes(red_mask, "rectangle", show_frame=False, return_largest = True)
+                    shape = arm.detect_shapes(blue_mask, "rectangle", show_frame=False, return_largest = True)
 
                     if shape is not None:
                         # Calculate minimum rectangle area parameters
