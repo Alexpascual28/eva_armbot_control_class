@@ -10,9 +10,10 @@ Created on Mon Nov  17:23:18 2023
 
 from armbot.kinematics import Kinematics
 from armbot.evasdk import Eva
+from armbot.aravis import Camera
+
 import time
 import cv2
-from armbot.aravis import Camera
 import threading
 import numpy as np
 import csv
@@ -95,51 +96,6 @@ class ArmBot:
         print("Done.\n")
         return eva
 
-    # Initializes camera module by connecting using the specified details
-    def initialize_camera(self, arm_hostname):
-        print("\nInitialising camera...")
-        
-        # Conexion details for the camera
-        camera1_hostname = "evacctv02"
-        camera1_ip = "144.32.152.10"
-        camera1_id = 'S1188411'
-        arm1_hostname = "evatrendylimashifterpt410" 
-
-        camera2_hostname = "evacctv03"
-        camera2_ip = "144.32.152.11"
-        camera2_id = 'S1188413'
-        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410"
-
-        # Create a “cam” object with these parameters to connect to the camera itself on the network based on the arm name
-        if arm_hostname == arm1_hostname:
-            cam = Camera(camera1_id)
-        else:
-            cam = Camera(camera2_id)
-        
-        # You can initialize a Camera object and set its parameters with:
-        cam.set_feature("Width", 1936)
-        cam.set_feature("Height", 1216)
-        cam.set_frame_rate(10)
-        cam.set_exposure_time(100000)
-        cam.set_pixel_format_from_string('BayerRG8')
-
-        # Print out the camera parameters in use
-        print("\nCamera model: ", cam.get_model_name())
-        print("Vendor Name: ", cam.get_vendor_name())
-        print("Device id: ", cam.get_device_id())
-        print("Region: ", cam.get_region(), end="")
-        print("\n")
-
-        print("Done.\n")
-
-        self.current_image = None # Instantiates variable to store current current image
-
-        # Create CSV file with default hsv values if none exists already, and read those values to possible colours
-        self.hsv_filename = 'hsv_colour_values.csv'
-        self.current_hsv_values = self.read_hsv_values(self.hsv_filename)
-        
-        return cam
-
     # Moves arm to home position ([0, -0.2, 0.3])
     def home_robot(self):
         with self.eva.lock():
@@ -202,9 +158,60 @@ class ArmBot:
             self.eva.gpio_set('ee_d1', True)
             self.eva.gpio_set('ee_d0', False)
 
+    # Initializes camera module by connecting using the specified details
+    def initialize_camera(self, arm_hostname):
+        print("\nInitialising camera...")
+        
+        # Conexion details for the camera
+        camera1_hostname = "evacctv02"
+        camera1_ip = "144.32.152.10"
+        camera1_id = 'S1188411'
+        arm1_hostname = "evatrendylimashifterpt410" 
+
+        camera2_hostname = "evacctv03"
+        camera2_ip = "144.32.152.11"
+        camera2_id = 'S1188413'
+        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410"
+
+        # Create a “cam” object with these parameters to connect to the camera itself on the network based on the arm name
+        if arm_hostname == arm1_hostname:
+            cam = Camera(camera1_id)
+        else:
+            cam = Camera(camera2_id)
+        
+        # You can initialize a Camera object and set its parameters with:
+        cam.set_feature("Width", 1936)
+        cam.set_feature("Height", 1216)
+        cam.set_frame_rate(10)
+        cam.set_exposure_time(100000)
+        cam.set_pixel_format_from_string('BayerRG8')
+
+        # Print out the camera parameters in use
+        print("\nCamera model: ", cam.get_model_name())
+        print("Vendor Name: ", cam.get_vendor_name())
+        print("Device id: ", cam.get_device_id())
+        print("Region: ", cam.get_region(), end="")
+        print("\n")
+
+        print("Done.\n")
+
+        # Create counter for FPS
+        self.frame_count = 0
+        self.start_time = time.time()
+
+        # Create members to store current image data
+        self.camera_thread = threading.Thread(target=self.capture_frame_continuous)
+        self.current_image = None # Instantiates variable to store current current image
+
+        # Create CSV file with default hsv values if none exists already, and read those values to possible colours
+        self.hsv_filename = 'hsv_colour_values.csv'
+        self.current_hsv_values = self.read_hsv_values(self.hsv_filename)
+        
+        return cam
+
     # Start continuous image acquisition
-    def start_image_acquisition(self, time_period = 86400, show_feed = True):
-        self.camera_thread = threading.Thread(target=self.show_camera_view, args=(time_period, show_feed))
+    def start_image_acquisition(self, time_period = 1800, show_feed = False):
+        self.camera_thread = threading.Thread(target=self.capture_frame_continuous, args=(time_period, show_feed,))
         self.camera_thread.start()
 
     # Returns current image
@@ -220,14 +227,14 @@ class ArmBot:
         self.camera_thread.join()
 
     # Shows continuous camera view
-    def show_camera_view(self, time_period = 60, show_feed = True):
+    def capture_frame_continuous(self, time_period = 60, show_feed = True, print_info = False):
         try:
             # Start the camera
             self.cam.start_acquisition_continuous()
             print("Camera On")
             
             # Open an OpenCV window to view the image
-            cv2.namedWindow('capture', flags=0)
+            if show_feed == True: cv2.namedWindow('capture', flags=0)
             
             i = 0
             delay = 20 # Delay in miliseconds per iteration
@@ -238,7 +245,7 @@ class ArmBot:
                 
                 # Capture an individual frame
                 frame = self.cam.pop_frame()
-                print("[", time.time(), "] frame nb: ", i, " shape: ", frame.shape)
+                if print_info == True: print("[", time.time(), "] frame nb: ", i, " shape: ", frame.shape)
                 
                 if not 0 in frame.shape:
                     # Convert to standard RGB format
@@ -246,11 +253,14 @@ class ArmBot:
             
                     # Show the image and wait a short time with:
                     if show_feed == True: cv2.imshow("capture", self.current_image)
-                    cv2.waitKey(delay)
+
+                    # if the `q` key was pressed, break from the loop
+                    if cv2.waitKey(delay) & 0xFF == ord("q"):
+                        break
                     
         except KeyboardInterrupt:
-           print("Exiting...")
-           
+            print("Exiting...")
+            
         finally:
             # Stop acquisition and shut down the camera with:
             self.cam.stop_acquisition()
@@ -285,35 +295,35 @@ class ArmBot:
 
     # Detect colour from given image
     def detect_colour(self, image, colour_name, frame_name="colour frame", image_format="hsv", show_frame = True):
-            blurred_image = self.blurring(image)
-            hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        blurred_image = self.blurring(image)
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-            if colour_name in self.current_hsv_values:
-                hsv_min = tuple(self.current_hsv_values.get(colour_name)[0])
-                hsv_max = tuple(self.current_hsv_values.get(colour_name)[1])
+        if colour_name in self.current_hsv_values:
+            hsv_min = tuple(self.current_hsv_values.get(colour_name)[0])
+            hsv_max = tuple(self.current_hsv_values.get(colour_name)[1])
 
-                mask=cv2.inRange(hsv,hsv_min,hsv_max)
-                masked_image = cv2.bitwise_and(image,image,mask=mask)
+            mask=cv2.inRange(hsv,hsv_min,hsv_max)
+            masked_image = cv2.bitwise_and(image,image,mask=mask)
 
-                self.frame_count += 1
-                average_fps = self.frame_count / ( time.time() - self.start_time )
-                cv2.putText(masked_image,"%2.1f fps" % average_fps, (50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,255),2,cv2.LINE_AA)
+            self.frame_count += 1
+            average_fps = self.frame_count / ( time.time() - self.start_time )
+            cv2.putText(masked_image,"%2.1f fps" % average_fps, (50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,255),2,cv2.LINE_AA)
 
-                # Show the frame
-                if show_frame == True:
-                    if frame_name == "colour frame": cv2.imshow(f"{colour_name} {frame_name}", masked_image)
-                    else: cv2.imshow(f"{frame_name}", masked_image)
+            # Show the frame
+            if show_frame == True:
+                if frame_name == "colour frame": cv2.imshow(f"{colour_name} {frame_name}", masked_image)
+                else: cv2.imshow(f"{frame_name}", masked_image)
 
-                return mask, masked_image
-            else:
-                print("Incorrect colour value.")
-                return None
+            return mask, masked_image
+        else:
+            print("Incorrect colour value.")
+            return None
 
-            # print(hsv_min)
-            # print(hsv_max)
+        # print(hsv_min)
+        # print(hsv_max)
 
-            # blueMin= (105,80,45)
-            # blueMax= (155,255,230)
+        # blueMin= (105,80,45)
+        # blueMax= (155,255,230)
 
     # Detect shapes from given image 
     def detect_shapes(self, mask, shape_name, frame_name="Shape Frame", show_frame = False, return_largest = False):
@@ -422,9 +432,9 @@ class ArmBot:
     def create_hsv_csv_file(self, filename):
         current_directory = os.getcwd()
 
-        default_hsv_values = {"red": [(172,120,0), (180,255,255)], # red hsv range: low(179,0,0), high(180,255,255) // red,172,120,0,180,255,255
-                            "blue": [(109,116,47),(115,255,100)], # blue hsv range: low(109,116,47), high(118,255,255) // blue,109,116,47,115,255,100
-                            "green":[(65, 61, 0),(95, 255, 255)], # green hsv range: low(65, 61, 0), high(79, 255, 255) // green,65,61,0,95,255,255
+        default_hsv_values = {"red": [(0,160,80), (20,200,170)], # red hsv range: low(179,0,0), high(180,255,255) // red,172,120,0,180,255,255
+                            "blue": [(51,0,5),(75,90,51)], # blue hsv range: low(109,116,47), high(118,255,255) // blue,109,116,47,115,255,100
+                            "green":[(45,110,20),(52,150,120)], # green hsv range: low(65, 61, 0), high(79, 255, 255) // green,65,61,0,95,255,255
                             "lilac":[(116, 60, 66),(152, 255, 255)],} # lilac hsv range: low(116, 60, 66), high(152, 255, 255) // lilac,116,60,66,152,255,255
 
         if not os.path.isfile(current_directory + '/' + filename):
