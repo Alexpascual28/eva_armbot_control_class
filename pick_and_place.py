@@ -85,10 +85,15 @@ def main():
                             
                             # b. Perform shape detection or blob detection using OpenCV to identify the target object to pick up.
                             # Detect blue colour
-                            blue_mask, _ = arm.detect_colour(image, "blue", show_frame=False)
+                            blue_mask, _ = arm.detect_colour(image, "red", show_frame=False)
                             
                             # Detect largest rectangle within image
-                            shape = arm.detect_shapes(blue_mask, "rectangle", show_frame=False, return_largest = True)
+                            shapes, _ = arm.detect_shapes(blue_mask, "rectangle", show_frame=False)
+
+                            if len(shapes) is not 0:
+                                shape = shapes[0]
+                            else:
+                                shape = None
 
                             if shape is not None:
                                 # Calculate minimum rectangle area parameters
@@ -97,15 +102,17 @@ def main():
 
                                 # Get corner points of the rectangle
                                 box = cv2.boxPoints(rectangle)
-                                box = np.int0(box)
+                                box = np.intp(box)
 
                                 # c. Show the frame in the OpenCV window with detection annotations.
-                                cv2.putText(image, f"Rectangle {shape[0]}", (center_x, center_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
-                                cv2.drawContours(image, [box], -1, (0, 255, 0), 2)
+                                # cv2.putText(image, f"Rectangle {shape[0]}", (center_x, center_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+                                # cv2.drawContours(image, [box], -1, (0, 255, 0), 2)
+                                arm.draw_shape(image, shape)
                     
                                 # Show the image and wait a short time with:
-                                cv2.imshow("Capture 2", image)
-                                cv2.waitKey(1)
+                                # cv2.imshow("Capture 2", image)
+                                # cv2.waitKey(1)
+                                arm.show_image("Capture 2", image)
                                 
                                 # d. Identify the location of the target object or the target drop location and convert this target location
                                 #    into the coordinate system that you are using for kinematics.
