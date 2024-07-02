@@ -4,35 +4,26 @@ import time
 import math
 import threading
 
-import random
-
-class HSVColourDetector:
+class ShapeDetector:
     def __init__(self):
-        self.colour_thread = threading.Thread(target=self.colour_picker)
+        self.shape_thread = threading.Thread(target=self.shape_picker)
         self.current_colour = "blue"
-        self.current_parameter = ""
-        self.current_range = ""
-        self.current_hsv_value = 0
+        self.current_shape = "rectangle"
 
         self.exit_selected = False
         self.colour_selected = False
-        self.parameter_selected = False
-        self.range_selected = False
 
         self.colours = ["red", "blue", "green", "lilac"]
-        self.parameters = ["hue", "saturation", "value"]
-        self.ranges = ["low", "high"]
+        self.shapes = ["triangle", "rectangle", "star", "circle"]
 
-    def start_colour_picker(self):
-        self.colour_thread.start()
+    def start_shape_picker(self):
+        self.shape_thread.start()
 
-    def colour_picker(self):
+    def shape_picker(self):
         state_machine = {
                     0: ["Start", self.start_interface, (lambda: self.colour_selected,), (1, 0)],
                     1: ["Colour Picker", self.select_colour, (lambda: self.exit_selected, lambda: self.colour_selected), (0, 2, 1)],
-                    2: ["Parameter Picker", self.select_parameter, (lambda: self.exit_selected, lambda: self.colour_selected, lambda: self.parameter_selected), (0, 1, 3, 2)],
-                    3: ["Range Picker", self.select_range, (lambda: self.exit_selected, lambda: self.colour_selected, lambda: self.parameter_selected, lambda: self.range_selected), (0, 1, 2, 4, 3)],
-                    4: ["Value Chooser", self.change_value, (lambda: self.exit_selected, lambda: self.colour_selected, lambda: self.parameter_selected, lambda: self.range_selected), (0, 1, 2, 3, 4)],
+                    2: ["Shape Picker", self.select_shape, (lambda: self.exit_selected, lambda: self.colour_selected), (0, 1, 2)],
                     }
 
         state_index = 0
@@ -56,19 +47,15 @@ class HSVColourDetector:
     def clear_conditions(self):
         self.exit_selected = False
         self.colour_selected = False
-        self.parameter_selected = False
-        self.range_selected = False
 
         print("\nCurrent Colour:", self.current_colour)
-        print("\nCurrent Parameter:", self.current_parameter)
-        print("\nCurrent Range:", self.current_range)
-        print("\nCurrent Value:", self.current_hsv_value)
+        print("\nCurrent Shape:", self.current_shape)
         
     def start_interface(self):
         self.clear_conditions()
 
         # Read user input
-        print("\n################ COLOUR PICKER & HSV VALUE SELECTOR ################")
+        print("\n################ SHAPE PICKER ################")
         userinput = input("ENTER \"C\" TO CONTINUE:")
 
         if userinput == "c" or userinput == "C":
@@ -93,100 +80,51 @@ class HSVColourDetector:
         else:
             print("Incorrect input.\n")
 
-    def select_parameter(self):
+    def select_shape(self):
         self.clear_conditions()
 
         # Read user input
-        print("\n################ SELECT HSV PARAMETER TO CHANGE ################")
-        userinput = input("\nEnter desired HSV colour parameter to change\n(H -> hue, S -> saturation, V -> brightness value),\n\nelse enter \n\"C\" to pick colour again \nor \"E\" to exit:")
+        print("\n################ SELECT SHAPE ################")
+        userinput = input("\nEnter desired shape to be detected\n(r/R -> rectangle, t/T -> triangle, s/S -> star, o/O -> circle), \n\nelse enter \n\"C\" to pick colour again \nor \"E\" to exit:")
 
-        parameterInput = {"H": "hue", "S": "saturation", "V": "value",
-                          "h": "hue", "s": "saturation", "v": "value"}
+        shapeInput = {"R": "rectangle", "T": "triangle", "S": "star", "O": "circle",
+                        "r": "rectangle", "t": "triangle", "s": "star", "o": "circle"}
 
         if userinput == "E" or userinput == "e":
             self.exit_selected = True
         elif userinput == "C" or userinput == "c":
             self.colour_selected = True
 
-        # If the user input is in parameterInput, change current paremter
-        elif userinput in parameterInput:
-            self.current_parameter = parameterInput.get(userinput) # Get associated value in parameterInput
-            self.parameter_selected = True
+        # If the user input is in colourInput, change current colour
+        elif userinput in shapeInput:
+            self.current_shape = shapeInput.get(userinput) # Get associated value in colourInput
 
         else:
             print("Incorrect input.\n")
-
-    def select_range(self):
-        self.clear_conditions()
-
-        # Read user input
-        print("\n######### SELECT WHAT END OF THE PARAMETER RANGE TO CHANGE #########")
-        userinput = input("\nEnter desired range end to change for the selected parameter\n(H -> high, L -> low),\n\nelse enter \n\"P\" to pick parameter again, \n\"C\" to pick colour again \nor \"E\" to exit:")
-
-        rangeInput = {"H": "high", "L": "low",
-                      "h": "high", "l": "low"}
-
-        if userinput == "E" or userinput == "e":
-            self.exit_selected = True
-        elif userinput == "C" or userinput == "c":
-            self.colour_selected = True
-        elif userinput == "P" or userinput == "p":
-            self.parameter_selected = True
-
-        # If the user input is in rangeInput, change current range
-        elif userinput in rangeInput:
-            self.current_range = rangeInput.get(userinput) # Get associated value in rangeInput
-            self.range_selected = True
-
-        else:
-            print("Incorrect input.\n")
-
-    def change_value(self):
-        self.clear_conditions()
-
-        # Read user input
-        print("\n################ SELECT PARAMETER VALUE ################")
-        userinput = input("\nEnter the desired value for the chosen selections,\n\nelse enter \n\"R\" to pick range again, \n\"P\" to pick parameter again, \n\"C\" to pick colour again \nor \"E\" to exit:")
-
-        if userinput == "E" or userinput == "e":
-            self.exit_selected = True
-        elif userinput == "C" or userinput == "c":
-            self.colour_selected = True
-        elif userinput == "P" or userinput == "p":
-            self.parameter_selected = True
-        elif userinput == "R" or userinput == "r":
-            self.range_selected = True
-
-        # If the user input is a number, change the value
-        elif userinput.isdigit():
-            self.current_hsv_value = int(userinput) # Get number from input
-
-        else:
-            print("Incorrect input.\n")
-            
 
 # Check if the node is executing in the main path
 if __name__ == '__main__':
     try:
-        arm = ab.ArmBot("evatrendylimashifterpt410");
-        cd = HSVColourDetector()
+        arm = ab.ArmBot("flashytokyobakerpt410");
+        sd = ShapeDetector()
 
         arm.start_image_acquisition(show_feed=True)
-        cd.start_colour_picker()
-
-        previous_hsv_value = cd.current_hsv_value
+        sd.start_shape_picker()
 
         while(True):
-            if cd.current_hsv_value != previous_hsv_value:
-                arm.change_hsv_values(cd.current_colour, cd.current_parameter, cd.current_range, cd.current_hsv_value)
-                previous_hsv_value = cd.current_hsv_value
-
             image = arm.get_current_image()
 
             if image is not None:
-                arm.detect_colour(image, cd.current_colour, frame_name="Colour Mask")
+                mask, masked_image = arm.detect_colour(image, sd.current_colour, frame_name="Colour Mask", show_frame=False)
+                shapes, mask = arm.detect_shapes(mask, sd.current_shape)
 
-        # wall_follower = WallFollowerFSM();
-        # wall_follower.main()
+                for shape in shapes:
+                    arm.draw_shape(masked_image, shape)
+
+                arm.show_image("Shapes", masked_image, continuous=True)
+
+                # masked_image = arm.apply_mask(image, mask)
+                # arm.show_image("Shape Mask", masked_image, continuous=True)
+
     except KeyboardInterrupt:
         print('Interrupted!')
