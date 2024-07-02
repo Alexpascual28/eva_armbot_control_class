@@ -8,17 +8,19 @@ Created on Mon Nov  17:23:18 2023
 
 """
 
+import os
+# os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "wayland"
+
 from armbot.kinematics import Kinematics
 from armbot.evasdk import Eva
 from armbot.aravis import Camera
 
 import time
 import cv2
+# os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 import threading
 import numpy as np
 import csv
-import os
-
 
 # 2. Initialize your kinematics functions and variables including the constants (dimensions, etc.) for the EVA robot arm.
 class ArmBot:
@@ -80,7 +82,7 @@ class ArmBot:
         token1 = "1462980d67d58cb7eaabe8790d866609eb97fd2c"
 
         arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410" 
-        arm2_ip = "172.16.172.1" # "144.32.152.2"
+        arm2_ip = "144.32.152.34" # "144.32.152.2"
         token2 = "23c1062c5e8a13f0cc638f222cef264487af75ff" # "4b1c26278a566e0419165a3acd025dd83d32b160"
 
         arm3_hostname = "evacunningyorkartistpt410"
