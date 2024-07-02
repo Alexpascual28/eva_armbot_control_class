@@ -87,7 +87,7 @@ class ArmBot:
 
         arm3_hostname = "evacunningyorkartistpt410"
         arm3_ip = "144.32.152.2"
-        token3 = "4b1c26278a566e0419165a3acd025dd83d32b160"
+        token3 = "4b1c26278a566e0419165a3acd025dd83d32b160" # ""
       
         # Create an “eva” object with these parameters to connect to the arm itself on the network
         if arm_hostname == arm1_hostname or arm_hostname == arm1_ip:
