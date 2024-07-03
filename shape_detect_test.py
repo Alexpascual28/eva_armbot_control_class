@@ -118,6 +118,8 @@ if __name__ == '__main__':
                 mask, masked_image = arm.detect_colour(image, sd.current_colour, frame_name="Colour Mask", show_frame=False)
                 shapes, mask = arm.detect_shapes(mask, sd.current_shape)
 
+                masked_image = arm.apply_mask(image, mask)
+
                 for shape in shapes:
                     arm.draw_shape(masked_image, shape)
 

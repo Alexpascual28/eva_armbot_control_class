@@ -84,7 +84,7 @@ class ArmBot:
         arm1_ip = "144.32.152.105"
         token1 = "1462980d67d58cb7eaabe8790d866609eb97fd2c"
 
-        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410" 
+        arm2_hostname = "evaflashytokyobakerpt410" # "evacunningyorkartistpt410" 
         arm2_ip = "144.32.152.34" # "144.32.152.2"
         token2 = "23c1062c5e8a13f0cc638f222cef264487af75ff" # "4b1c26278a566e0419165a3acd025dd83d32b160"
 
@@ -176,7 +176,7 @@ class ArmBot:
         camera2_hostname = "evacctv03"
         camera2_ip = "144.32.152.11"
         camera2_id = 'S1188413'
-        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410"
+        arm2_hostname = "evaflashytokyobakerpt410" # "evacunningyorkartistpt410"
 
         # Create a “cam” object with these parameters to connect to the camera itself on the network based on the arm name
         if arm_hostname == arm1_hostname:
@@ -313,13 +313,29 @@ class ArmBot:
     # Detect colour from given image
     def detect_colour(self, image, colour_name, frame_name="colour frame", image_format="hsv", show_frame = True):
         blurred_image = self.blurring(image)
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+        for i in range(10):
+            blurred_image = self.blurring(blurred_image)
+
+        hsv = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HSV)
 
         if colour_name in self.current_hsv_values:
             hsv_min = tuple(self.current_hsv_values.get(colour_name)[0])
             hsv_max = tuple(self.current_hsv_values.get(colour_name)[1])
 
             mask=cv2.inRange(hsv,hsv_min,hsv_max)
+
+            for i in range(6):
+                mask = self.eroding(mask)
+
+            mask = self.closing(mask)
+            mask = self.closing(mask)
+            mask = self.dilating(mask)
+            mask = self.dilating(mask)
+
+            for i in range(12):
+                mask = self.closing(mask)
+
             masked_image = cv2.bitwise_and(image,image,mask=mask)
 
             self.frame_count += 1
@@ -383,10 +399,14 @@ class ArmBot:
                     centroid_x = int(M['m10']/M['m00'])
                     centroid_y = int(M['m01']/M['m00'])
 
-                    if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
-                        shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
-                        shapes.append(shape)
-                        shape_counter += 1
+                    shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
+                    shapes.append(shape)
+                    shape_counter += 1
+
+                    # if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
+                        # shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
+                        # shapes.append(shape)
+                        # shape_counter += 1
                 
                 return shapes, mask
             
@@ -400,17 +420,19 @@ class ArmBot:
                 #Center locations
                 M = cv2.moments(max_contour)
                 if M['m00'] != 0.0:
-                    centroid_x = int(M['m10']/M['m00'])
-                    centroid_y = int(M['m01']/M['m00'])
+                    continue
 
-                    if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
-                        shape = [shape_name, max_contour, centroid_x, centroid_y, len(approx)]
+                centroid_x = int(M['m10']/M['m00'])
+                centroid_y = int(M['m01']/M['m00'])
 
-                        return shape, mask
-                    
-                    else:
-                        print("No target shapes detected.")
-                        return None
+                if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
+                    shape = [shape_name, max_contour, centroid_x, centroid_y, len(approx)]
+
+                    return shape, mask
+                
+                else:
+                    print("No target shapes detected.")
+                    return None
                 else:
                     print("No contours detected.")
                     return None
@@ -421,7 +443,8 @@ class ArmBot:
         
     # Draw shape
     def draw_shape(self, image, shape):
-        cv2.putText(image, f"{shape[0]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
+        cv2.putText(image, f"{shape[0]} + len:{shape[4]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
+        # cv2.putText(image, f"{shape[0]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
         cv2.drawContours(image, shape[1], 0, (0,255,0), 3)
         
     # Apply mask

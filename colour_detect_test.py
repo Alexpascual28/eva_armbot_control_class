@@ -166,7 +166,7 @@ class HSVColourDetector:
 # Check if the node is executing in the main path
 if __name__ == '__main__':
     try:
-        arm = ab.ArmBot("flashytokyobakerpt410");
+        arm = ab.ArmBot("evatrendylimashifterpt410"); #  evaflashytokyobakerpt410
         cd = HSVColourDetector()
 
         arm.start_image_acquisition(show_feed=True)
