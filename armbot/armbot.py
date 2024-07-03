@@ -368,7 +368,7 @@ class ArmBot:
 
     # Detect shapes from given image 
     def detect_shapes(self, mask, shape_name, frame_name="Shape Frame", show_frame = False, return_largest = False):
-        possible_shapes = {'triangle': 3, 'rectangle': 4, 'star': 10, 'circle': 11}
+        possible_shapes = {'triangle': 3, 'rectangle': 4, 'star': 10, 'circle': 8}
 
         if shape_name in possible_shapes:
             shapes = []
@@ -399,14 +399,14 @@ class ArmBot:
                     centroid_x = int(M['m10']/M['m00'])
                     centroid_y = int(M['m01']/M['m00'])
 
-                    shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
-                    shapes.append(shape)
-                    shape_counter += 1
+                    # shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
+                    # shapes.append(shape)
+                    # shape_counter += 1
 
-                    # if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
-                        # shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
-                        # shapes.append(shape)
-                        # shape_counter += 1
+                    if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
+                        shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
+                        shapes.append(shape)
+                        shape_counter += 1
                 
                 return shapes, mask
             
@@ -420,19 +420,17 @@ class ArmBot:
                 #Center locations
                 M = cv2.moments(max_contour)
                 if M['m00'] != 0.0:
-                    continue
+                    centroid_x = int(M['m10']/M['m00'])
+                    centroid_y = int(M['m01']/M['m00'])
 
-                centroid_x = int(M['m10']/M['m00'])
-                centroid_y = int(M['m01']/M['m00'])
+                    if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
+                        shape = [shape_name, max_contour, centroid_x, centroid_y, len(approx)]
 
-                if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
-                    shape = [shape_name, max_contour, centroid_x, centroid_y, len(approx)]
-
-                    return shape, mask
-                
-                else:
-                    print("No target shapes detected.")
-                    return None
+                        return shape, mask
+                    
+                    else:
+                        print("No target shapes detected.")
+                        return None
                 else:
                     print("No contours detected.")
                     return None
@@ -443,8 +441,8 @@ class ArmBot:
         
     # Draw shape
     def draw_shape(self, image, shape):
-        cv2.putText(image, f"{shape[0]} + len:{shape[4]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
-        # cv2.putText(image, f"{shape[0]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
+        # cv2.putText(image, f"{shape[0]} + len:{shape[4]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
+        cv2.putText(image, f"{shape[0]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
         cv2.drawContours(image, shape[1], 0, (0,255,0), 3)
         
     # Apply mask
