@@ -8,17 +8,22 @@ Created on Mon Nov  17:23:18 2023
 
 """
 
+import os
+# os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "wayland"
+os.environ["QT_QPA_PLATFORM"] = "xcb"
+
 from armbot.kinematics import Kinematics
 from armbot.evasdk import Eva
 from armbot.aravis import Camera
 
 import time
 import cv2
+import matplotlib.pyplot as plt
+
+# os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 import threading
 import numpy as np
 import csv
-import os
-
 
 # 2. Initialize your kinematics functions and variables including the constants (dimensions, etc.) for the EVA robot arm.
 class ArmBot:
@@ -79,13 +84,13 @@ class ArmBot:
         arm1_ip = "144.32.152.105"
         token1 = "1462980d67d58cb7eaabe8790d866609eb97fd2c"
 
-        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410" 
-        arm2_ip = "172.16.172.1" # "144.32.152.2"
+        arm2_hostname = "evaflashytokyobakerpt410" # "evacunningyorkartistpt410" 
+        arm2_ip = "144.32.152.34" # "144.32.152.2"
         token2 = "23c1062c5e8a13f0cc638f222cef264487af75ff" # "4b1c26278a566e0419165a3acd025dd83d32b160"
 
         arm3_hostname = "evacunningyorkartistpt410"
         arm3_ip = "144.32.152.2"
-        token3 = "4b1c26278a566e0419165a3acd025dd83d32b160"
+        token3 = "4b1c26278a566e0419165a3acd025dd83d32b160" # ""
       
         # Create an “eva” object with these parameters to connect to the arm itself on the network
         if arm_hostname == arm1_hostname or arm_hostname == arm1_ip:
@@ -171,7 +176,7 @@ class ArmBot:
         camera2_hostname = "evacctv03"
         camera2_ip = "144.32.152.11"
         camera2_id = 'S1188413'
-        arm2_hostname = "flashytokyobakerpt410" # "evacunningyorkartistpt410"
+        arm2_hostname = "evaflashytokyobakerpt410" # "evacunningyorkartistpt410"
 
         # Create a “cam” object with these parameters to connect to the camera itself on the network based on the arm name
         if arm_hostname == arm1_hostname:
@@ -219,8 +224,20 @@ class ArmBot:
         return self.current_image
     
     # Displays image
-    def show_image(self, frame_name, image):
-        cv2.imshow(frame_name, image)
+    def show_image(self, frame_name, image, continuous=False):
+        # cv2.imshow(frame_name, image)
+        # cv2.waitKey(30)
+        if continuous == False:
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            plt.figure(f"{frame_name}")
+            plt.imshow(image)
+            plt.show()
+        else:
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            plt.figure(f"{frame_name}")
+            plt.imshow(image)
+            plt.pause(0.0001)
+            plt.clf()
 
     # Stops image acquisition thread
     def stop_image_acquisition(self):
@@ -296,13 +313,29 @@ class ArmBot:
     # Detect colour from given image
     def detect_colour(self, image, colour_name, frame_name="colour frame", image_format="hsv", show_frame = True):
         blurred_image = self.blurring(image)
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+        for i in range(10):
+            blurred_image = self.blurring(blurred_image)
+
+        hsv = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HSV)
 
         if colour_name in self.current_hsv_values:
             hsv_min = tuple(self.current_hsv_values.get(colour_name)[0])
             hsv_max = tuple(self.current_hsv_values.get(colour_name)[1])
 
             mask=cv2.inRange(hsv,hsv_min,hsv_max)
+
+            for i in range(6):
+                mask = self.eroding(mask)
+
+            mask = self.closing(mask)
+            mask = self.closing(mask)
+            mask = self.dilating(mask)
+            mask = self.dilating(mask)
+
+            for i in range(12):
+                mask = self.closing(mask)
+
             masked_image = cv2.bitwise_and(image,image,mask=mask)
 
             self.frame_count += 1
@@ -311,8 +344,16 @@ class ArmBot:
 
             # Show the frame
             if show_frame == True:
-                if frame_name == "colour frame": cv2.imshow(f"{colour_name} {frame_name}", masked_image)
-                else: cv2.imshow(f"{frame_name}", masked_image)
+                # if frame_name == "colour frame": cv2.imshow(f"{colour_name} {frame_name}", masked_image)
+                # else: cv2.imshow(f"{frame_name}", masked_image)
+                # cv2.waitKey(30)
+
+                masked_image = cv2.cvtColor(masked_image, cv2.COLOR_BGR2RGB)
+
+                plt.figure(f"{frame_name}")
+                plt.imshow(masked_image)
+                plt.pause(0.0001)
+                plt.clf()
 
             return mask, masked_image
         else:
@@ -327,7 +368,7 @@ class ArmBot:
 
     # Detect shapes from given image 
     def detect_shapes(self, mask, shape_name, frame_name="Shape Frame", show_frame = False, return_largest = False):
-        possible_shapes = {'triangle': 3, 'rectangle': 4, 'star': 10, 'circle': 11}
+        possible_shapes = {'triangle': 3, 'rectangle': 4, 'star': 10, 'circle': 8}
 
         if shape_name in possible_shapes:
             shapes = []
@@ -358,12 +399,16 @@ class ArmBot:
                     centroid_x = int(M['m10']/M['m00'])
                     centroid_y = int(M['m01']/M['m00'])
 
+                    # shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
+                    # shapes.append(shape)
+                    # shape_counter += 1
+
                     if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
                         shape = [f"{shape_name} {shape_counter}", contour, centroid_x, centroid_y, len(approx)]
                         shapes.append(shape)
                         shape_counter += 1
-
-                return shapes
+                
+                return shapes, mask
             
             else:
                 # Select the largest one
@@ -381,7 +426,7 @@ class ArmBot:
                     if (len(approx) == possible_shapes.get(shape_name)) or (len(approx) >= 11 and shape_name == 'circle'):
                         shape = [shape_name, max_contour, centroid_x, centroid_y, len(approx)]
 
-                        return shape
+                        return shape, mask
                     
                     else:
                         print("No target shapes detected.")
@@ -393,6 +438,17 @@ class ArmBot:
         else:
             print("Incorrect shape value.")
             return None
+        
+    # Draw shape
+    def draw_shape(self, image, shape):
+        # cv2.putText(image, f"{shape[0]} + len:{shape[4]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
+        cv2.putText(image, f"{shape[0]}", (shape[2],shape[3]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2, cv2.LINE_AA)
+        cv2.drawContours(image, shape[1], 0, (0,255,0), 3)
+        
+    # Apply mask
+    def apply_mask(self, image, mask):
+        masked_image = cv2.bitwise_and(image,image,mask=mask)
+        return masked_image
     
     # Closing morphology
     def closing(self, mask):
@@ -432,10 +488,26 @@ class ArmBot:
     def create_hsv_csv_file(self, filename):
         current_directory = os.getcwd()
 
-        default_hsv_values = {"red": [(0,160,80), (20,200,170)], # red hsv range: low(179,0,0), high(180,255,255) // red,172,120,0,180,255,255
-                            "blue": [(51,0,5),(75,90,51)], # blue hsv range: low(109,116,47), high(118,255,255) // blue,109,116,47,115,255,100
-                            "green":[(45,110,20),(52,150,120)], # green hsv range: low(65, 61, 0), high(79, 255, 255) // green,65,61,0,95,255,255
-                            "lilac":[(116, 60, 66),(152, 255, 255)],} # lilac hsv range: low(116, 60, 66), high(152, 255, 255) // lilac,116,60,66,152,255,255
+        default_hsv_values = {"red": [(0,150,90), (25,210,255)], 
+                            "blue": [(51,30,0),(120,130,255)], 
+                            "green":[(40,100,50),(52,200,210)], 
+                            "lilac":[(116,60,66),(152,255,255)],} 
+
+        # red,0,150,90,25,210,255
+        # blue,51,30,0,120,130,255
+        # green,40,100,50,52,200,210
+        # lilac,116,60,66,152,255,255
+
+        # Alternatives:
+        # "red": [(0,160,80), (20,200,170)], 
+        # "blue": [(51,0,5),(75,90,51)],
+        # "green":[(45,110,20),(52,150,120)],
+        # "lilac":[(116, 60, 66),(152, 255, 255)]
+
+        # red hsv range: low(179,0,0), high(180,255,255) // red,172,120,0,180,255,255
+        # blue hsv range: low(109,116,47), high(118,255,255) // blue,109,116,47,115,255,100
+        # green hsv range: low(65, 61, 0), high(79, 255, 255) // green,65,61,0,95,255,255
+        # lilac hsv range: low(116, 60, 66), high(152, 255, 255) // lilac,116,60,66,152,255,255
 
         if not os.path.isfile(current_directory + '/' + filename):
             self.write_hsv_values(filename, default_hsv_values)

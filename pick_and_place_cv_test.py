@@ -43,8 +43,8 @@ def main():
 
             if image is not None:
                 # Show the image and wait a short time with:
-                # arm.show_image("Capture", image)
-                # print("[", time.time(), "] initial frame. ""Shape: ", image.shape)
+                arm.show_image("Capture", image)
+                print("[", time.time(), "] initial frame. ""Shape: ", image.shape)
                     
                 # 4. Move the arm to a starting position, ideally near where your target is located so that your camera can see it, 
                 #    and initialize the state of the robot arm to have no object in its gripper and to move to pick up.
@@ -85,10 +85,10 @@ def main():
                             
                             # b. Perform shape detection or blob detection using OpenCV to identify the target object to pick up.
                             # Detect blue colour
-                            red_mask, _ = arm.detect_colour(image, "red", show_frame=False)
+                            blue_mask, _ = arm.detect_colour(image, "red", show_frame=False)
                             
                             # Detect largest rectangle within image
-                            shapes, _ = arm.detect_shapes(red_mask, "rectangle", show_frame=True)
+                            shapes, _ = arm.detect_shapes(blue_mask, "rectangle", show_frame=False)
 
                             if len(shapes) is not 0:
                                 shape = shapes[0]
@@ -127,9 +127,7 @@ def main():
                                 known_width = 0.02 # Known width of object in metres (2 centimetres).
                                 
                                 # Calculate position of center point of contour in 3D space (from the camera)
-                                center_z = # (known_width * focal_length_p) / contour_width # Distance to the object in metres
-                                center_x = 
-                                center_y = 
+                                center_z = (known_width * focal_length_p) / contour_width # Distance to the object in metres
                                 # point_xyz = [center_x, center_y, center_z] # point is in Camera Optical frame, i.e. point[0] x-right (px),  point[1] y-down (px), point[2] z-forward (m)
             
                                 # e. Calculate inverse kinematics for the robot arm to move to the next step in direction towards the target 
@@ -143,11 +141,11 @@ def main():
                                 
                                 # Adjust x axis
                                 if (center_x > (image_width / 2) + margin): # If the object is too much to the left
-                                    target_position_x = -robot_step_size; # Move to the right
+                                    target_position_x = robot_step_size; # Move to the right
                                     is_aligned_x = False;
                                     
                                 elif (center_x < (image_width / 2) - margin): # If the object is too much to the right
-                                    target_position_x = robot_step_size; # Move to the left
+                                    target_position_x = -robot_step_size; # Move to the left
                                     is_aligned_x = False;
                                     
                                 else: # If the object is in the centre (within the margin)

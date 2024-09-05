@@ -4,8 +4,6 @@ import time
 import math
 import threading
 
-import random
-
 class HSVColourDetector:
     def __init__(self):
         self.colour_thread = threading.Thread(target=self.colour_picker)
@@ -168,7 +166,7 @@ class HSVColourDetector:
 # Check if the node is executing in the main path
 if __name__ == '__main__':
     try:
-        arm = ab.ArmBot("evatrendylimashifterpt410");
+        arm = ab.ArmBot("evatrendylimashifterpt410"); #  evaflashytokyobakerpt410
         cd = HSVColourDetector()
 
         arm.start_image_acquisition(show_feed=True)
@@ -186,7 +184,5 @@ if __name__ == '__main__':
             if image is not None:
                 arm.detect_colour(image, cd.current_colour, frame_name="Colour Mask")
 
-        # wall_follower = WallFollowerFSM();
-        # wall_follower.main()
     except KeyboardInterrupt:
         print('Interrupted!')
